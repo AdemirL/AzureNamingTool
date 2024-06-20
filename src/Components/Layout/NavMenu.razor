@@ -1,4 +1,4 @@
-﻿@using AzureNamingTool.Helpers
+@using AzureNamingTool.Helpers
 @using AzureNamingTool.Models
 @using AzureNamingTool.Components.General
 @inject StateContainer state
@@ -75,6 +75,13 @@
             </div>
         }
 
+        <!-- Add the new NavLink for Naming Standards Documentation -->
+        <div class="nav-item px-2">
+            <NavLink class="nav-link" href="/naming-standards">
+                <span class="oi oi-book" aria-hidden="true"></span> Naming Standards
+            </NavLink>
+        </div>
+
         @if (GeneralHelper.IsNotNull(PageType))
         {
             @if (PageType.ToString() == "AzureNamingTool.Components.Pages.Configuration")
@@ -149,13 +156,13 @@
                             Latest News
                         </label>
                         <label class="switch" title="Latest News Switch" style="top:-5px; float:right;">
-                            <input type="checkbox" checked="@latestnewsenabled" @oninput="NewsChanged">
+                            <input type="checkbox" @bind="latestnewsenabled" @oninput="NewsChanged">
                             <span class="slider round"></span>
                         </label>
                         <div style="clear:both"></div>
                         @if (latestnewsenabled)
                         {
-                            <div classclass="nav-link" style="padding-top:10px">
+                            <div class="nav-link" style="padding-top:10px">
                                 <LatestNews></LatestNews>
                             </div>
                         }
@@ -196,49 +203,50 @@
                 servicesData = await ServicesHelper.LoadServicesData(servicesData, admin);
                 try
                 {
-                    result = await storage.GetAsync<bool>("latestnewsenabled");
-                    latestnewsenabled = result.Success ? result.Value : true;
-                }
-                catch
-                {
-                    latestnewsenabled = true;
-                }
-                state.LatestNewsEnabled = latestnewsenabled;
-            }
-            else
-            {
-                connected = false;
-            }
-            StateHasChanged();
-        }
-        else
-        {
-            if ((GeneralHelper.IsNotNull(servicesData)) || (state._reloadnav))
-            {
-                servicesData = await ServicesHelper.LoadServicesData(servicesData, admin);
-                state.SetNavReload(false);
-            }
-        }
+                    result = await storage.GetAsync<bool>
+    ("latestnewsenabled");
+    latestnewsenabled = result.Success ? result.Value : true;
+    }
+    catch
+    {
+    latestnewsenabled = true;
+    }
+    state.LatestNewsEnabled = latestnewsenabled;
+    }
+    else
+    {
+    connected = false;
+    }
+    StateHasChanged();
+    }
+    else
+    {
+    if ((GeneralHelper.IsNotNull(servicesData)) || (state._reloadnav))
+    {
+    servicesData = await ServicesHelper.LoadServicesData(servicesData, admin);
+    state.SetNavReload(false);
+    }
+    }
     }
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+    collapseNavMenu = !collapseNavMenu;
     }
 
     private async void OnConfigNavClick(string e)
     {
-        await JsRuntime.InvokeVoidAsync("scrollIntoView", e);
+    await JsRuntime.InvokeVoidAsync("scrollIntoView", e);
     }
 
     private async void NewsChanged(ChangeEventArgs e)
     {
-        if (GeneralHelper.IsNotNull(e.Value))
-        {
-            latestnewsenabled = (bool)e.Value;
-            await storage.SetAsync("newsenabled", latestnewsenabled);
-            state.LatestNewsEnabled = latestnewsenabled;
-            StateHasChanged();
-        }
+    if (GeneralHelper.IsNotNull(e.Value))
+    {
+    latestnewsenabled = (bool)e.Value;
+    await storage.SetAsync("newsenabled", latestnewsenabled);
+    state.LatestNewsEnabled = latestnewsenabled;
+    StateHasChanged();
     }
-}
+    }
+    }
